@@ -1,4 +1,5 @@
 ﻿using BethanysPieShop.Models;
+using BethanysPieShop.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BethanysPieShop.Controllers
@@ -24,13 +25,19 @@ namespace BethanysPieShop.Controllers
         //The return type is IActionResult, that is the overarching interface type that all results will implement 
         public IActionResult List()
         {
+            /*
             //ViewBag is dynamic, you can add any property onto it
             // ViewBag is shared between the controller and the view
             //The view will be able to access the properties inside of the ViewBag
             ViewBag.CurrentCategory = "Cheese cakes";
 
             //For now this will return a View passing in he _pieRepository.AllPies
-            return View(_pieRepository.AllPies);
+            return View(_pieRepository.AllPies);*/
+
+            //Now instead of passing the date in two ways, I can now use the constructor of PieListViewModel and pass in the AllPies and the CurrentCategory and then return that to the view
+            PieListViewModel pieListViewModel = new PieListViewModel(_pieRepository.AllPies, "Cheese cakes");
+
+            return View(pieListViewModel);
         }
         
 
