@@ -8,18 +8,26 @@
 * folder to contain static content 
 */
 using BethanysPieShop.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Let's add in a service here
 
 //Register ourown services: ICategoryRepository and IPieRepository
-builder.Services.AddScoped<ICategoryRepository, MockCategoryRepository>();
-builder.Services.AddScoped<IPieRepository, MockPieRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IPieRepository, PieRepository>();
 
 //builder has access to Servecies collections
 //AddControlersWithViews will make sure that our application knows about ASP.NET Core MVC
 builder.Services.AddControllersWithViews();
+
+
+//Register the DbContext
+builder.Services.AddDbContext<BethanysPieShopDbContext>(options => {
+    options.UseSqlServer(
+        builder.Configuration["ConnectionStrings:BethanysPieShopDbContextConnection"]);
+});
 
 //This app instance can be used to bring in multiple middleware components
 var app = builder.Build();
@@ -47,6 +55,9 @@ if (app.Environment.IsDevelopment())
 // to in fact make sure that ASP.NET Core will be able to handle incoming requests correctly
 // This is an endpoint middleware so it must be placed at the end
 app.MapDefaultControllerRoute();
+
+//Call the DbInitializer.Seed
+DbInitializer.Seed(app);
 
 //This will start our application 
 app.Run();
